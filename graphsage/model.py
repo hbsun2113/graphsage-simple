@@ -72,10 +72,10 @@ def run_cora():
    # features.cuda()
 
     agg1 = MeanAggregator(features, cuda=True)
-    enc1 = Encoder(features, 1433, 128, adj_lists, agg1, gcn=True, cuda=False)
+    enc1 = Encoder(features, 1433, 128, adj_lists, agg1, gcn=False, cuda=False)
     agg2 = MeanAggregator(lambda nodes : enc1(nodes).t(), cuda=False)
     enc2 = Encoder(lambda nodes : enc1(nodes).t(), enc1.embed_dim, 128, adj_lists, agg2,
-            base_model=enc1, gcn=True, cuda=False)
+            base_model=enc1, gcn=False, cuda=False)
     enc1.num_samples = 5
     enc2.num_samples = 5
 
@@ -99,7 +99,7 @@ def run_cora():
         optimizer.step()
         end_time = time.time()
         times.append(end_time-start_time)
-        print batch, loss.data[0]
+        print batch, loss.item()
 
     val_output = graphsage.forward(val) 
     print "Validation F1:", f1_score(labels[val], val_output.data.numpy().argmax(axis=1), average="micro")

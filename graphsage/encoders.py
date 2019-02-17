@@ -43,7 +43,9 @@ class Encoder(nn.Module):
                 self_feats = self.features(torch.LongTensor(nodes).cuda())
             else:
                 self_feats = self.features(torch.LongTensor(nodes))
+            # print('hbsun1 ', self_feats.shape, neigh_feats.shape) #('hbsun1 ', (694, 1433), (694, 1433))
             combined = torch.cat([self_feats, neigh_feats], dim=1)
+            # print('hbsun2 ', combined.shape) #('hbsun2 ', (694, 2866))
         else:
             combined = neigh_feats
         combined = F.relu(self.weight.mm(combined.t()))
