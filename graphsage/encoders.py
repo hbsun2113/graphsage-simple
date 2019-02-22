@@ -27,7 +27,7 @@ class Encoder(nn.Module):
         self.cuda = cuda
         self.aggregator.cuda = cuda
         self.weight = nn.Parameter(
-                torch.FloatTensor(embed_dim, self.feat_dim if self.gcn else 2 * self.feat_dim))
+                torch.FloatTensor(embed_dim, self.feat_dim if self.gcn else 2 * self.feat_dim))  # (EF,F)或(EF,F)
         init.xavier_uniform(self.weight)
 
     def forward(self, nodes):
@@ -47,6 +47,6 @@ class Encoder(nn.Module):
             combined = torch.cat([self_feats, neigh_feats], dim=1)
             # print('hbsun2 ', combined.shape) #('hbsun2 ', (694, 2866))
         else:
-            combined = neigh_feats
-        combined = F.relu(self.weight.mm(combined.t()))
-        return combined
+            combined = neigh_feats  # (B, F)或(B, 2F)
+        combined = F.relu(self.weight.mm(combined.t()))  # 注意这个t是转置
+        return combined   # (EF,B)
